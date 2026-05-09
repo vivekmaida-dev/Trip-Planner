@@ -1,0 +1,8 @@
+import Card from '../components/ui/Card'
+import Slider from '../components/ui/Slider'
+import Toggle from '../components/ui/Toggle'
+export default function FoodSection({ trip, onUpdate }) {
+ const food=trip.food
+ const setFood=(patch)=>onUpdate({ food:{...food,...patch} })
+ return <Card><h3 className='section-title'>Food</h3><div className='flex gap-2'><button className={`tab-btn ${food.diet==='veg'?'active':''}`} onClick={()=>setFood({ diet:'veg' })}>🥦 Veg</button><button className={`tab-btn ${food.diet==='mix'?'active':''}`} onClick={()=>setFood({ diet:'mix' })}>🍱 Mix</button><button className={`tab-btn ${food.diet==='nonveg'?'active':''}`} onClick={()=>setFood({ diet:'nonveg' })}>🍗 Non-Veg</button></div><div className='mt-3 grid gap-2 sm:grid-cols-3'><label><span className='text-xs text-text-secondary'>Meals/day</span><select className='input-base' value={food.mealsPerDay} onChange={(e)=>setFood({ mealsPerDay:Number(e.target.value) })}><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option></select></label><Slider label='Alcohol / drinks (per person/day)' min={0} max={1000} value={food.drinks} onChange={(v)=>setFood({ drinks:v })}/><Slider label='Road snacks (daily)' min={0} max={500} value={food.snacks} onChange={(v)=>setFood({ snacks:v })}/></div><div className='mt-3 space-y-2'><Toggle label='Breakfast' checked={food.includeBreakfast} onChange={(v)=>setFood({ includeBreakfast:v })}/><Toggle label='Lunch' checked={food.includeLunch} onChange={(v)=>setFood({ includeLunch:v })}/><Toggle label='Dinner' checked={food.includeDinner} onChange={(v)=>setFood({ includeDinner:v })}/><Toggle label='Street food mode (-40%)' checked={food.streetFood} onChange={(v)=>setFood({ streetFood:v })}/></div></Card>
+}

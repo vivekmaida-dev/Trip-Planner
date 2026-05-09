@@ -1,0 +1,7 @@
+import Card from '../components/ui/Card'
+import Slider from '../components/ui/Slider'
+export default function MoneySection({ trip, destination, onUpdate }) {
+ const e=trip.extras
+ const setE=(patch)=>onUpdate({ extras:{...e,...patch} })
+ return <Card><h3 className='section-title'>Money & Extras</h3><div className='grid gap-2 sm:grid-cols-2'><label><span className='text-xs text-text-secondary'>Visa fee / person</span><input className='input-base' type='number' value={trip.visaFee||0} onChange={(ev)=>onUpdate({ visaFee:Number(ev.target.value) })}/></label><label><span className='text-xs text-text-secondary'>Visa type</span><input className='input-base' readOnly value={destination?.visa || 'free'} /></label></div><div className='mt-3 grid gap-2 sm:grid-cols-2'><Slider label='Insurance / person' min={200} max={2000} value={e.insurance} onChange={(v)=>setE({ insurance:v })}/><Slider label='Forex markup %' min={0} max={5} value={e.forex} onChange={(v)=>setE({ forex:v })}/><Slider label='SIM / roaming per person' min={0} max={2000} value={e.sim} onChange={(v)=>setE({ sim:v })}/><Slider label='Laundry / person' min={0} max={500} value={e.laundry} onChange={(v)=>setE({ laundry:v })}/><Slider label='Shopping' min={0} max={10000} value={e.shopping} onChange={(v)=>setE({ shopping:v })}/><Slider label='Emergency buffer %' min={0} max={20} value={e.emergencyBuffer} onChange={(v)=>setE({ emergencyBuffer:v })}/><Slider label='Medical kit' min={0} max={2000} value={e.medical} onChange={(v)=>setE({ medical:v })}/></div></Card>
+}

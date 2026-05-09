@@ -1,0 +1,7 @@
+import Card from '../components/ui/Card'
+import Toggle from '../components/ui/Toggle'
+export default function GroupSection({ trip, onUpdate }) {
+ const p=trip.people
+ const setPeople=(patch)=>onUpdate({ people:{...p,...patch} })
+ return <Card><h3 className='section-title'>Group</h3><div className='grid gap-2 sm:grid-cols-3'><label><span className='text-xs text-text-secondary'>Total people</span><input className='input-base' type='number' min='1' max='12' value={p.total} onChange={(e)=>setPeople({ total:Number(e.target.value) })}/></label><label><span className='text-xs text-text-secondary'>Adults</span><input className='input-base' type='number' min='1' value={p.adults} onChange={(e)=>setPeople({ adults:Number(e.target.value) })}/></label><label><span className='text-xs text-text-secondary'>Children</span><input className='input-base' type='number' min='0' value={p.children} onChange={(e)=>setPeople({ children:Number(e.target.value) })}/></label></div><div className='mt-2'><Toggle label='Separate room for kids' checked={p.separateKidsRoom} onChange={(v)=>setPeople({ separateKidsRoom:v })}/></div><label className='mt-2 block'><span className='text-xs text-text-secondary'>Group type</span><select className='input-base' value={trip.groupType||'friends'} onChange={(e)=>onUpdate({ groupType:e.target.value })}>{['friends','family','couple','solo','corporate'].map((x)=><option key={x}>{x}</option>)}</select></label></Card>
+}

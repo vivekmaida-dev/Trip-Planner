@@ -15,14 +15,43 @@ import { useUIStore } from '../store/uiStore'
 export default function PlanTrip(){
  const { currentTrip, updateCurrentTrip, saveTrip } = useTripStore()
  const { addToCompare, pushNotification } = useUIStore()
- const destination = useMemo(()=>destinationsData.find((d)=>d.id===currentTrip.destinationId), [currentTrip.destinationId])
+ const destinationIds = currentTrip.destinationIds?.length
+  ? currentTrip.destinationIds
+  : currentTrip.destinationId
+    ? [currentTrip.destinationId]
+    : []
+ const selectedDestinations = useMemo(
+  () => destinationIds.map((id) => destinationsData.find((d) => d.id === id)).filter(Boolean),
+  [destinationIds],
+ )
+ const destination = selectedDestinations[0]
  useEffect(()=>{
-  const listener=(ev)=>updateCurrentTrip({ destinationId:ev.detail })
+  const listener=(ev)=>{
+    const id = ev.detail
+    const next = [id, ...destinationIds.filter((x) => x !== id)]
+    updateCurrentTrip({ destinationId: id, destinationIds: next })
+  }
   window.addEventListener('switch-destination', listener)
   return ()=>window.removeEventListener('switch-destination', listener)
- }, [updateCurrentTrip])
+ }, [updateCurrentTrip, destinationIds])
  const onSave = ()=>{ saveTrip(currentTrip.name || (destination ? `${destination.name} Trip` : 'New Trip')); pushNotification('Trip saved') }
  const onCompare = ()=>{ if(currentTrip.id) addToCompare(currentTrip.id); pushNotification('Added to compare queue') }
 
- return <div className='grid gap-4 lg:grid-cols-[1.15fr_.85fr]'><div className='space-y-4'><DestinationSection trip={currentTrip} onUpdate={updateCurrentTrip}/><DatesSection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/><TransportSection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/><StaySection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/><FoodSection trip={currentTrip} onUpdate={updateCurrentTrip}/><GroupSection trip={currentTrip} onUpdate={updateCurrentTrip}/><ActivitiesSection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/><MoneySection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/></div><OutputPanel trip={currentTrip} destination={destination} onSave={onSave} onCompare={onCompare} allDestinations={destinationsData}/></div>
+ return (
+  <div className='grid gap-4 lg:grid-cols-[1.15fr_.85fr]'>
+   <div className='space-y-4 min-w-0 overflow-hidden'>
+    <DestinationSection trip={currentTrip} onUpdate={updateCurrentTrip}/>
+    <DatesSection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/>
+    <TransportSection trip={currentTrip} destination={destination} destinations={selectedDestinations} onUpdate={updateCurrentTrip}/>
+    <StaySection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/>
+    <FoodSection trip={currentTrip} destinations={selectedDestinations} onUpdate={updateCurrentTrip}/>
+    <GroupSection trip={currentTrip} onUpdate={updateCurrentTrip}/>
+    <ActivitiesSection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/>
+    <MoneySection trip={currentTrip} destination={destination} onUpdate={updateCurrentTrip}/>
+   </div>
+   <div className='min-w-0'>
+    <OutputPanel trip={currentTrip} destination={destination} destinations={selectedDestinations} onSave={onSave} onCompare={onCompare} allDestinations={destinationsData}/>
+   </div>
+  </div>
+ )
 }

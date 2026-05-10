@@ -1,9 +1,50 @@
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Slider from '../components/ui/Slider'
+
 export default function ActivitiesSection({ trip, onUpdate, destination }) {
- const add=()=>onUpdate({ activities:[...trip.activities,{ id:Date.now(), name:'', cost:1000, perPerson:true, mandatory:true }] })
- const patch=(id,patch)=>onUpdate({ activities:trip.activities.map((a)=>a.id===id?{...a,...patch}:a) })
- const remove=(id)=>onUpdate({ activities:trip.activities.filter((a)=>a.id!==id) })
- return <Card><div className='mb-2 flex items-center justify-between'><h3 className='section-title m-0'>Activities</h3><Button onClick={add}>Add Activity</Button></div>{trip.activities.length===0 && <p className='text-sm text-text-secondary'>No activities added yet.</p>}<div className='space-y-2'>{trip.activities.map((a)=><div key={a.id} className='rounded-xl border border-border-subtle p-2'><div className='grid gap-2 sm:grid-cols-3'><input className='input-base' placeholder='Activity name' value={a.name} onChange={(e)=>patch(a.id,{ name:e.target.value })}/><input className='input-base' type='number' value={a.cost} onChange={(e)=>patch(a.id,{ cost:Number(e.target.value) })}/><select className='input-base' value={a.perPerson?'per_person':'flat'} onChange={(e)=>patch(a.id,{ perPerson:e.target.value==='per_person' })}><option value='per_person'>Per person</option><option value='flat'>Flat total</option></select></div><div className='mt-2 flex items-center justify-between'><button className={`tab-btn ${a.mandatory?'active':''}`} onClick={()=>patch(a.id,{ mandatory:!a.mandatory })}>{a.mandatory?'Mandatory':'Optional'}</button><button className='text-xs text-red-300' onClick={()=>remove(a.id)}>Delete</button></div></div>)}</div><div className='mt-3'><p className='mb-2 text-xs text-text-secondary'>Suggestions</p><div className='flex flex-wrap gap-2'>{(destination?.popularActivities||[]).map((x)=><button key={x.name} className='tab-btn' onClick={()=>onUpdate({ activities:[...trip.activities,{ id:Date.now()+Math.random(), name:x.name, cost:x.cost, perPerson:x.perPerson, mandatory:false }] })}>{x.name}</button>)}</div></div><div className='mt-3 grid gap-2 sm:grid-cols-2'><Slider label='Equipment rental' min={0} max={5000} value={trip.equipmentRental||0} onChange={(v)=>onUpdate({ equipmentRental:v })}/><Slider label='Guide fee/day' min={0} max={3000} value={trip.guideFee||0} onChange={(v)=>onUpdate({ guideFee:v })}/></div></Card>
+ const add = () => onUpdate({ activities:[...trip.activities,{ id:Date.now(), name:'', cost:1000, perPerson:true, mandatory:true }] })
+ const patch = (id, p) => onUpdate({ activities:trip.activities.map((a)=>a.id===id?{...a,...p}:a) })
+ const remove = (id) => onUpdate({ activities:trip.activities.filter((a)=>a.id!==id) })
+ return (
+  <Card>
+   <div className='mb-2 flex items-center justify-between'>
+    <h3 className='section-title m-0'>Activities</h3>
+    <Button onClick={add}>Add Activity</Button>
+   </div>
+   {trip.activities.length===0 && <p className='text-sm text-text-secondary'>No activities added yet.</p>}
+   <div className='space-y-2'>
+    {trip.activities.map((a)=>(
+     <div key={a.id} className='rounded-xl border border-border-subtle p-2'>
+      <div className='grid grid-cols-1 gap-2 sm:grid-cols-3'>
+       <input className='input-base' placeholder='Activity name' value={a.name} onChange={(e)=>patch(a.id,{ name:e.target.value })}/>
+       <input className='input-base' type='number' value={a.cost} onChange={(e)=>patch(a.id,{ cost:Number(e.target.value) })}/>
+       <select className='input-base' value={a.perPerson?'per_person':'flat'} onChange={(e)=>patch(a.id,{ perPerson:e.target.value==='per_person' })}>
+        <option value='per_person'>Per person</option>
+        <option value='flat'>Flat total</option>
+       </select>
+      </div>
+      <div className='mt-2 flex items-center justify-between'>
+       <button className={`tab-btn ${a.mandatory?'active':''}`} onClick={()=>patch(a.id,{ mandatory:!a.mandatory })}>{a.mandatory?'Mandatory':'Optional'}</button>
+       <button className='text-xs text-red-300' onClick={()=>remove(a.id)}>Delete</button>
+      </div>
+     </div>
+    ))}
+   </div>
+   <div className='mt-3'>
+    <p className='mb-2 text-xs text-text-secondary'>Suggestions</p>
+    <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+     {(destination?.popularActivities||[]).map((x)=>(
+      <button key={x.name} className='tab-btn' onClick={()=>onUpdate({ activities:[...trip.activities,{ id:Date.now()+Math.random(), name:x.name, cost:x.cost, perPerson:x.perPerson, mandatory:false }] })}>
+       {x.name}
+      </button>
+     ))}
+    </div>
+   </div>
+   <div className='mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2'>
+    <Slider label='Equipment rental' min={0} max={5000} value={trip.equipmentRental||0} onChange={(v)=>onUpdate({ equipmentRental:v })}/>
+    <Slider label='Guide fee/day' min={0} max={3000} value={trip.guideFee||0} onChange={(v)=>onUpdate({ guideFee:v })}/>
+   </div>
+  </Card>
+ )
 }

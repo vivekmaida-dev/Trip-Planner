@@ -17,10 +17,12 @@
   --font-body: 'DM Sans', sans-serif;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; max-width: 100%; }
 html, body, #root { min-height: 100%; }
 html { font-family: 'DM Sans', sans-serif; background: #080c14; color: #f1f5f9; }
-body { margin: 0; overflow-x: hidden; }
+body { margin: 0; overflow-x: hidden; width: 100%; }
+img, svg, video, canvas { max-width: 100%; display: block; }
+input, select, textarea, button { font-family: inherit; }
 
 body::before {
   content: '';
@@ -32,14 +34,15 @@ body::before {
   background-size: 3px 3px;
 }
 
-.glass-card {
+.glass-card, .section-card {
   background: rgba(15, 22, 35, 0.86);
   backdrop-filter: blur(10px);
   border: 1px solid #1e2d45;
   border-radius: 14px;
   transition: all .2s ease;
 }
-.glass-card:hover {
+.section-card { padding: 1rem; }
+.glass-card:hover, .section-card:hover {
   border-color: rgba(61,142,240,.45);
   box-shadow: 0 0 22px rgba(61,142,240,.12);
 }
@@ -55,8 +58,51 @@ body::before {
 }
 .input-base:focus { outline: none; border-color: #3d8ef0; box-shadow: 0 0 0 3px rgba(61,142,240,.2); }
 .section-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; margin: 0 0 .9rem; }
-.tab-btn { border:1px solid #1e2d45; border-radius:10px; padding:.45rem .8rem; color:#94a3b8; background:#0f1623; }
+.tab-btn { border:1px solid #2a3d56; border-radius:10px; padding:.45rem .8rem; color:#94a3b8; background:#131d2e; cursor:pointer; white-space:nowrap; transition:all .15s; }
+.tab-btn:hover { border-color:#3d8ef0; color:#c8d4e3; }
 .tab-btn.active { border-color:#3d8ef0; color:#f1f5f9; background:#16253d; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-thumb { background: #1e2d45; border-radius: 999px; }
+
+/* OutputPanel responsive sticky */
+.output-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 16px;
+}
+@media (min-width: 1024px) {
+  .output-panel-wrap {
+    position: sticky;
+    top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+}
+
+/* Grand total 2-col grid, 1-col on mobile */
+.grand-total-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-top: 12px;
+  font-size: 0.78rem;
+}
+@media (max-width: 480px) {
+  .grand-total-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ensure date inputs don't overflow on mobile */
+input[type='date'] {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Hide reorder arrows on very small screens */
+@media (max-width: 420px) {
+  .reorder-btns { display: none !important; }
+}

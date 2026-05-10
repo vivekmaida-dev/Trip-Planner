@@ -10,6 +10,7 @@ import ExpenseTracker from './pages/ExpenseTracker'
 import SavingsPlanner from './pages/SavingsPlanner'
 import MyTrips from './pages/MyTrips'
 import Settings from './pages/Settings'
+import { useUIStore } from './store/uiStore'
 
 const pages = [
   { path: '/dashboard', element: <Dashboard /> },
@@ -22,17 +23,36 @@ const pages = [
 ]
 
 function App() {
+  const { sidebarOpen, setSidebarOpen } = useUIStore()
+
   return (
-    <div className='min-h-screen bg-primary text-text-primary'>
-      <div className='mx-auto flex max-w-[1700px]'>
+    <div style={{ minHeight: '100vh', background: '#080c14', color: '#f1f5f9', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', maxWidth: 1700, margin: '0 auto', position: 'relative' }}>
+        {/* Mobile backdrop */}
+        {sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 25,
+              background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)',
+            }}
+          />
+        )}
+
         <Sidebar />
-        <div className='min-w-0 flex-1'>
+
+        {/* Main content */}
+        <div style={{ flex: 1, minWidth: 0, width: '100%', overflow: 'hidden' }}>
           <TopBar />
           <AnimatePresence mode='wait'>
             <Routes>
               <Route path='/' element={<Navigate to='/plan-trip' replace />} />
               {pages.map((page) => (
-                <Route key={page.path} path={page.path} element={<PageWrapper>{page.element}</PageWrapper>} />
+                <Route
+                  key={page.path}
+                  path={page.path}
+                  element={<PageWrapper>{page.element}</PageWrapper>}
+                />
               ))}
             </Routes>
           </AnimatePresence>

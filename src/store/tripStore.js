@@ -5,12 +5,15 @@ export const createDefaultTrip = () => ({
   id: `trip-${Date.now()}`,
   name: '',
   destinationId: '',
+  destinationIds: [],
   month: new Date().getMonth() + 1,
   startDate: '',
   endDate: '',
   days: 5,
   people: { total: 2, adults: 2, children: 0, separateKidsRoom: false },
   transport: { mode: 'flight', roundTrip: true, passengers: 2, tier: 'standard', baggage: 0, seatSelection: 0, localTransport: 800 },
+  legTransports: {}, // keyed "fromId__toId" → per-leg transport config
+  cityFood: {},      // keyed by cityId → { diet: 'veg'|'mix'|'nonveg' } overrides global food.diet
   stay: { type: 'hotel', tier: 'mid', rooms: 1, nights: 4, breakfastIncluded: false, mixed: [] },
   food: { diet: 'mix', mealsPerDay: 3, includeBreakfast: true, includeLunch: true, includeDinner: true, streetFood: false, drinks: 200, snacks: 100 },
   activities: [],
